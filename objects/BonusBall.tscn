@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3 uid="uid://bonus_ball_scene"]
+
+[ext_resource type="Script" path="res://objects/BonusBall.gd" id=1]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 10.0
+
+[sub_resource type="ParticleProcessMaterial" id=2]
+direction            = Vector3(0, -1, 0)
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+angular_velocity_min = -180.0
+angular_velocity_max = 180.0
+gravity              = Vector3(0, 98, 0)
+scale_min            = 0.5
+scale_max            = 1.5
+
+[sub_resource type="PlaceholderTexture2D" id=3]
+
+[node name="BonusBall" type="CharacterBody2D"]
+process_mode = 1
+script       = ExtResource(1)
+
+[node name="BallSprite" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left    = 0.5
+anchor_top     = 0.5
+anchor_right   = 0.5
+anchor_bottom  = 0.5
+offset_left    = -10.0
+offset_top     = -10.0
+offset_right   = 10.0
+offset_bottom  = 10.0
+color          = Color(0.6, 0.4, 0.2, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource(1)
+
+[node name="ParticleSystem" type="GPUParticles2D" parent="."]
+emitting         = false
+amount           = 20
+process_material = SubResource(2)
+texture          = SubResource(3)
+lifetime         = 1.0
+one_shot         = true

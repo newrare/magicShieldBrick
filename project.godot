@@ -1,0 +1,86 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Magic Shield Brick"
+config/description="A simple mobile game where you protect your character with a circular magical shield. The goal is to survive as long as possible by collecting stars to achieve a higher score. Addictive, simple, and efficient gameplay. A quick and casual experience for mobile."
+config/version="1.0"
+run/main_scene="res://scenes/MainMenu.tscn"
+config/features=PackedStringArray("4.5")
+config/icon="uid://chj6dtxse52g3"
+
+[autoload]
+
+AdManager="*res://managers/AdManager.gd"
+AnimationManager="*res://managers/AnimationManager.gd"
+AudioManager="*res://managers/AudioManager.gd"
+BallSpawner="*res://managers/BallSpawner.gd"
+BonusLifeManager="*res://managers/BonusLifeManager.gd"
+ControlManager="*res://managers/ControlManager.gd"
+GameManager="*res://managers/GameManager.gd"
+GameStatsManager="*res://managers/GameStatsManager.gd"
+LanguageManager="*res://managers/LanguageManager.gd"
+PowerUpManager="*res://managers/PowerUpManager.gd"
+ScoreManager="*res://managers/ScoreManager.gd"
+ToolsManager="*res://managers/ToolsManager.gd"
+UIManager="*res://managers/UIManager.gd"
+GameConstant="*res://managers/GameConstant.gd"
+
+[display]
+
+window/size/viewport_width=720
+window/size/viewport_height=1280
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=1
+
+[dotnet]
+
+project/assembly_name="Magic Shield Brick"
+
+[gui]
+
+common/drop_mouse_on_gui_input_disabled=true
+
+[input]
+
+ui_accept={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194309,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":32,"physical_keycode":0,"key_label":0,"unicode":32,"location":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":0,"pressure":0.0,"pressed":true,"script":null)
+]
+}
+ui_cancel={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194305,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+, Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":1,"pressure":0.0,"pressed":true,"script":null)
+]
+}
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
+[internationalization]
+
+locale/test="fr"
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=2
+renderer/rendering_method="mobile"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true
