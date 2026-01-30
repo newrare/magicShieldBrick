@@ -8,6 +8,10 @@ extends Control
 @onready var options_button 	= $VBoxContainer/ButtonContainer/OptionsButton
 @onready var quit_button 		= $VBoxContainer/ButtonContainer/QuitButton
 @onready var title_image 		= $VBoxContainer/TitleImage
+@onready var newrare_container 	= $NewrareContainer
+@onready var newrare_image 		= $NewrareContainer/NewrareImage
+@onready var newrare_label 		= $NewrareContainer/TextContainer/NewrareLabel
+@onready var version_label 		= $NewrareContainer/TextContainer/VersionLabel
 
 var background_sprite: TextureRect
 var tween: Tween
@@ -18,6 +22,10 @@ var tween: Tween
 func _ready():
 	# Load background
 	set_background()
+
+	# Load Newrare branding
+	set_newrare_branding()
+	position_branding_at_bottom()
 
 	# Load button
 	start_button.pressed.connect(_on_start_pressed)
@@ -118,3 +126,45 @@ func set_background():
 	tween.set_loops()
 	tween.tween_property(background_sprite, "position:x", end_x, 15)
 	tween.tween_property(background_sprite, "position:x", start_x, 15)
+
+
+# Set Newrare branding (image + text)
+func set_newrare_branding():
+	# Load Newrare logo
+	var newrare_texture = load("res://assets/images/newrare.png")
+
+	if newrare_texture and newrare_image:
+		newrare_image.texture = newrare_texture
+		newrare_image.custom_minimum_size = Vector2(80, 80)
+
+	# Set branding text
+	if newrare_label:
+		newrare_label.text = "A Newrare Game"
+		newrare_label.add_theme_font_size_override("font_size", 18)
+		newrare_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7, 1.0))
+
+	# Load and display version dynamically
+	if version_label:
+		var config 	= ConfigFile.new()
+		var version = "1.0"
+
+		if config.load("res://project.godot") == OK:
+			version = config.get_value("application", "config/version", "1.0")
+
+		version_label.text = "v" + version
+		version_label.add_theme_font_size_override("font_size", 14)
+		version_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5, 1.0))
+
+# Position branding
+func position_branding_at_bottom():
+	if newrare_container:
+		await get_tree().process_frame
+
+		# Adjust the offset to position at 2% bottom and left
+		var screen_size 	= get_viewport().get_visible_rect().size
+		var margin_bottom 	= screen_size.y * 0.01
+		var margin_left 	= screen_size.x * 0.02
+
+		newrare_container.offset_left 	= margin_left
+		newrare_container.offset_top 	= -100.0 - margin_bottom
+		newrare_container.offset_bottom = -margin_bottom

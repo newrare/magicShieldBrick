@@ -6,6 +6,7 @@ extends Control
 @onready var lives_container	= $UI/LivesContainer
 @onready var pause_button		= $UI/PauseButton
 @onready var pause_menu			= $UI/PauseMenu
+@onready var tutorial_label		= $UI/TutorialLabel
 
 var hearts: 		Array[Control] 	= []
 var life_display:	int 			= 3
@@ -75,6 +76,10 @@ func _ready():
 	# Restore pause state if returning from OptionsMenu
 	if GameManager.get_was_paused():
 		call_deferred("restore_pause_state")
+
+	# Start tutorial if first time playing
+	if should_show_tutorial():
+		call_deferred("start_tutorial")
 
 
 # Called when score milestone is crossed
@@ -267,11 +272,6 @@ func toggle_pause():
 	last_pause_time		= current_time_ms
 	is_paused			= !is_paused
 	get_tree().paused	= is_paused
-
-	# Update audio based on pause state
-	#if !is_paused:
-		# Unpause: restore music state from user settings (don't force unmute)
-		#AudioManager.update_music_state(AudioManager.is_music_muted)
 
 	# Update pause menu visibility
 	if pause_menu:
@@ -504,6 +504,84 @@ func _on_options_menu_exiting():
 
 	get_tree().paused = true
 
+
+
+# Show tutorial the first time playing
+func should_show_tutorial():
+	# Don't show in free mode
+	if GameManager.get_is_free_mode():
+		return false
+
+	# Check if there are any scores
+	ScoreManager.load_scores()
+	return ScoreManager.high_scores.is_empty()
+
+
+# Start the tutorial sequence
+func start_tutorial():
+	if not tutorial_label:
+		return
+
+	# Tutorial messages
+	var messages = [
+		tr("TUTORIAL_1"),
+		tr("TUTORIAL_2"),
+		tr("TUTORIAL_3")
+	]
+
+	# Configure tutorial label
+	tutorial_label.add_theme_font_size_override("normal_font_size", 28)
+	tutorial_label.add_theme_font_size_override("bold_font_size", 28)
+	tutorial_label.add_theme_color_override("default_color", Color.WHITE)
+
+	# Position label between player and score
+	position_tutorial_label()
+
+	# Show messages sequentially
+	await get_tree().create_timer(3.0).timeout
+
+	for i in range(messages.size()):
+		await show_tutorial_message(messages[i])
+		await get_tree().create_timer(3.0).timeout
+
+
+# Position tutorial label 300px below player
+func position_tutorial_label():
+	if not tutorial_label or not player_area:
+		return
+
+	tutorial_label.offset_top 		= 300
+	tutorial_label.offset_bottom 	= 400
+
+
+# Show a message
+func show_tutorial_message(message: String):
+	if not tutorial_label:
+		return
+
+	# Set the message
+	tutorial_label.text 	= "[center]" + message + "[/center]"
+	tutorial_label.visible	= true
+
+	# Enable slow motion
+	Engine.time_scale = 0.3
+
+	# Fade in (1 second)
+	var tween_in = create_tween()
+	tween_in.tween_property(tutorial_label, "modulate:a", 1.0, 1.0)
+	await tween_in.finished
+
+	# Wait 1 second at full opacity
+	await get_tree().create_timer(1.0).timeout
+
+	# Fade out (1 second)
+	var tween_out = create_tween()
+	tween_out.tween_property(tutorial_label, "modulate:a", 0.0, 1.0)
+	await tween_out.finished
+
+	# Hide and restore normal speed
+	tutorial_label.visible 	= false
+	Engine.time_scale 		= 1.0
 
 func go_to_main_menu():
 	get_tree().paused = false

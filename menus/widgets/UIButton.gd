@@ -17,7 +17,10 @@ func _ready():
 	if custom_minimum_size == Vector2.ZERO:
 		var viewport_width  = get_viewport_rect().size.x
 		var button_width    = int(viewport_width * 0.7)
-		custom_minimum_size = Vector2(button_width, 60)
+		custom_minimum_size = Vector2(button_width, 90)
+	else:
+		# If custom size is set, increase height for better touch targets
+		custom_minimum_size.y = custom_minimum_size.y * 1.5
 
 	# Load textures
 	var button_texture          = load("res://assets/images/button.png")
@@ -41,7 +44,7 @@ func _ready():
 	label.vertical_alignment    = VERTICAL_ALIGNMENT_CENTER
 
 	label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	label.add_theme_font_size_override("font_size", 20)
+	label.add_theme_font_size_override("font_size", 24)
 	label.add_theme_color_override("font_color", Color.WHITE)
 	add_child(label)
 

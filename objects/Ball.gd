@@ -14,8 +14,13 @@ extends CharacterBody2D
 @export var gravity_multiplier_classic	: float = 2.0
 
 # Gravity mode tracking
-var gravity_mode: String = "classic"
-var consecutive_wall_hits : int = 0
+var gravity_mode			: String 	= "classic"
+var consecutive_wall_hits	: int 		= 0
+
+# Anti-orbit timer: increases gravity if no collision for 5 seconds
+var no_collision_timer		: float = 0.0
+var no_collision_threshold	: float = 5.0
+var gravity_boost_multiplier: float = 1.0
 
 var screen_size           : Vector2
 var trail_points          : Array = []
@@ -44,6 +49,9 @@ func _physics_process(delta):
 	# Get player position for gravity effect
 	update_player_position()
 
+	# Update no-collision timer for gravity boost
+	update_no_collision_timer(delta)
+
 	# Apply gravity towards player
 	apply_player_gravity(delta)
 
@@ -62,6 +70,24 @@ func update_player_position():
 	var game_scene = get_tree().get_first_node_in_group("game_scene")
 	if game_scene and game_scene.has_method("get_player_position"):
 		player_position = game_scene.get_player_position()
+
+# Update no-collision timer - increases gravity if ball orbits without hitting anything
+func update_no_collision_timer(delta):
+	no_collision_timer += delta
+
+	# Every 5 seconds without collision, double the gravity boost
+	if no_collision_timer >= no_collision_threshold:
+		gravity_boost_multiplier *= 2.0
+		no_collision_timer = 0.0
+		print("⚠️ Gravity boost increased to x%s due to no collisions!" % gravity_boost_multiplier)
+
+# Reset the no-collision timer when ball hits wall or shield
+func reset_no_collision_timer():
+	if gravity_boost_multiplier > 1.0:
+		print("⚠️  Gravity boost reset (was x%s)" % gravity_boost_multiplier)
+
+	no_collision_timer 			= 0.0
+	gravity_boost_multiplier 	= 1.0
 
 func apply_player_gravity(delta):
 	# Calculate direction towards player
@@ -88,8 +114,8 @@ func apply_player_gravity(delta):
 			var eased = pow(1.0 - normalized_distance, 2.0)  # Quadratic easing
 			gravity_factor = lerp(multiplier, 1.0, eased)
 
-	# Apply gravity force towards player with distance-based multiplier
-	var gravity_force = direction_to_player * gravity_strength * gravity_factor * delta
+	# Apply gravity force towards player
+	var gravity_force = direction_to_player * gravity_strength * gravity_factor * gravity_boost_multiplier * delta
 
 	# Add gravity to velocity (will be normalized after)
 	velocity += gravity_force
@@ -146,6 +172,9 @@ func bounce_off_shield(shield_center: Vector2, collision_point: Vector2):
 
 	# Reset wall hit counter when bouncing off shield
 	consecutive_wall_hits = 0
+
+	# Reset no-collision timer to prevent gravity boost
+	reset_no_collision_timer()
 
 	# Reposition ball outside shield to avoid multiple collisions
 	var shield = get_tree().get_first_node_in_group("shield")
@@ -224,6 +253,10 @@ func check_screen_boundaries():
 		if consecutive_wall_hits >= 2:
 			gravity_mode = "strong"
 			consecutive_wall_hits = 0  # Reset counter
+
+		# Reset no-collision timer to prevent gravity boost
+		reset_no_collision_timer()
+
 		on_wall_hit(wall_side)
 
 func apply_bounce_angle():

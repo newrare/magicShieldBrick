@@ -120,6 +120,11 @@ func setup_audio_players():
 		audio.name			= key
 		audio.volume_db		= sound["volume"]
 		audio.process_mode	= Node.PROCESS_MODE_ALWAYS
+
+		# Best Android compatibility
+		audio.bus 			= "Master"
+		audio.mix_target 	= AudioStreamPlayer.MIX_TARGET_STEREO
+
 		sound["audio"]		= audio
 
 		add_child(audio)
@@ -138,6 +143,9 @@ func load_audio_resources():
 				sound["stream"] = stream
 				if sound["audio"]:
 					sound["audio"].stream = stream
+
+					# Reset playback state for Android compatibility
+					sound["audio"].stop()
 				print("✅ Loaded: %s" % path)
 			else:
 				print("❌ Failed to load %s" % path)

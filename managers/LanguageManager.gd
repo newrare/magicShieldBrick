@@ -81,6 +81,10 @@ func load_basic_translations():
 	en_translation.add_message("START_GAME",					"Play")
 	en_translation.add_message("RESET_TO_DEFAULT",				"Reset to Default")
 
+	en_translation.add_message("TUTORIAL_1",					"Control the [color=#00FFFF]shield[/color] to block the [color=#00FFFF]blue ball[/color]")
+	en_translation.add_message("TUTORIAL_2",					"[color=#33FF4D]Green stars[/color] temporarily enlarge the [color=#00FFFF]shield[/color]")
+	en_translation.add_message("TUTORIAL_3",					"Change game controls as needed via [color=#FFA500]options[/color]")
+
 	TranslationServer.add_translation(en_translation)
 
 	# FR
@@ -144,6 +148,10 @@ func load_basic_translations():
 	fr_translation.add_message("MAX_BALLS_IN_SCENE",			"Nombre max de balles")
 	fr_translation.add_message("START_GAME",					"Jouer")
 	fr_translation.add_message("RESET_TO_DEFAULT",				"Réinitialiser")
+
+	fr_translation.add_message("TUTORIAL_1",					"Contrôle le [color=#00FFFF]bouclier[/color] pour bloquer la [color=#00FFFF]balle[/color] bleue")
+	fr_translation.add_message("TUTORIAL_2",					"Les [color=#33FF4D]étoiles[/color] vertes agrandissent le [color=#00FFFF]bouclier[/color] temporairement")
+	fr_translation.add_message("TUTORIAL_3",					"Change les contrôles du jeu au besoin via les [color=#FFA500]options[/color]")
 
 	TranslationServer.add_translation(fr_translation)
 

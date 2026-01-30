@@ -78,8 +78,8 @@ func create_slider_group(constant_name: String, min_value: float, max_value: flo
 	value_label.name	= constant_name + "_ValueLabel"
 
 	value_label.add_theme_font_size_override("font_size", 18)
-	value_label.add_theme_color_override("font_color", Color(0.5, 1, 0.5, 1))  # Light green
-	value_label.horizontal_alignment  = HORIZONTAL_ALIGNMENT_RIGHT
+	value_label.add_theme_color_override("font_color", Color(1.0, 0.6, 0.0, 1.0))  # Orange
+	value_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	header_container.add_child(value_label)
 
 	group.add_child(header_container)
@@ -90,8 +90,53 @@ func create_slider_group(constant_name: String, min_value: float, max_value: flo
 	slider.min_value            	= min_value
 	slider.max_value            	= max_value
 	slider.step                 	= step_value
-	slider.custom_minimum_size  	= Vector2(400, 50)
+	slider.custom_minimum_size  	= Vector2(400, 80)
 	slider.size_flags_horizontal	= Control.SIZE_EXPAND_FILL
+
+	# Make the grabber and slider track much bigger for mobile touch
+	var grabber_size = 80  # Large grabber for touch
+	var track_height = 40  # Thick track
+
+	# Create a StyleBoxFlat for the slider track (background)
+	var track_style 	= StyleBoxFlat.new()
+	track_style.bg_color= Color(0.2, 0.2, 0.2, 1.0)
+
+	track_style.set_corner_radius_all(track_height / 2)
+	track_style.content_margin_top 		= track_height / 2
+	track_style.content_margin_bottom 	= track_height / 2
+
+	# Create a StyleBoxFlat for the filled portion
+	var fill_style 		= StyleBoxFlat.new()
+	fill_style.bg_color = Color(1.0, 0.5, 0.0, 1.0)  # Orange
+
+	fill_style.set_corner_radius_all(track_height / 2)
+	fill_style.content_margin_top 		= track_height / 2
+	fill_style.content_margin_bottom 	= track_height / 2
+
+	# Create a StyleBoxFlat for the grabber
+	var grabber_style 		= StyleBoxFlat.new()
+	grabber_style.bg_color 	= Color(1.0, 1.0, 1.0, 1.0)
+
+	grabber_style.set_corner_radius_all(grabber_size / 2)
+	grabber_style.content_margin_left 	= grabber_size / 2
+	grabber_style.content_margin_right 	= grabber_size / 2
+	grabber_style.content_margin_top 	= grabber_size / 2
+	grabber_style.content_margin_bottom = grabber_size / 2
+
+	# Apply styles to slider
+	slider.add_theme_stylebox_override("slider", track_style)
+	slider.add_theme_stylebox_override("grabber_area", fill_style)
+	slider.add_theme_stylebox_override("grabber_area_highlight", fill_style)
+
+	# Remove the grabber icon (white dot) by using an empty texture
+	var empty_texture = ImageTexture.new()
+	slider.add_theme_icon_override("grabber", empty_texture)
+	slider.add_theme_icon_override("grabber_highlight", empty_texture)
+	slider.add_theme_icon_override("grabber_disabled", empty_texture)
+
+	# Set grabber icon size (we'll use a larger grabber)
+	slider.add_theme_constant_override("grabber_offset", grabber_size / 4)
+	slider.add_theme_constant_override("center_grabber", 1)
 
 	# Connect slider value change
 	slider.value_changed.connect(_on_slider_value_changed.bind(constant_name, value_label))
@@ -106,7 +151,7 @@ func create_slider_group(constant_name: String, min_value: float, max_value: flo
 	}
 
 	# Add spacing
-	group.add_theme_constant_override("separation", 10)
+	group.add_theme_constant_override("separation", 2)
 
 	return group
 
